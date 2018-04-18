@@ -1,5 +1,8 @@
 from data import DICTIONARY, LETTER_SCORES
 
+class SignatureDctionary:
+    dic = None
+
 def load_words():
     """Load dictionary into a list and return list"""
 
@@ -42,18 +45,19 @@ def init_find_optimal():
         else:
             newDictionary[sign] = [word]
 
-    return newDictionary
+    SignatureDctionary.dic = newDictionary
 
 def find_optimal(i_bunchOfLetters):
     """Find the optimal (highest scoring) word from these letters which is in the dictionary.
     Return it and the score."""
 
-    signatureDctionary = init_find_optimal()
+    if SignatureDctionary.dic == None:
+        init_find_optimal()
 
     inputSignature = ''.join(sorted(i_bunchOfLetters.upper()))
 
-    if  signatureDctionary.has_key(inputSignature):
-        identicSignatureWords = signatureDctionary[inputSignature]
+    if  SignatureDctionary.dic.has_key(inputSignature):
+        identicSignatureWords = SignatureDctionary.dic[inputSignature]
         maxWord = max_word_value(identicSignatureWords)
         maxWordValue = calc_word_value(maxWord)
     else:
@@ -63,5 +67,4 @@ def find_optimal(i_bunchOfLetters):
     return (maxWord, maxWordValue)
 
 if __name__ == "__main__":
-
     pass # run unittests to validate

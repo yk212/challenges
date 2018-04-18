@@ -28,10 +28,40 @@ def max_word_value(i_words = load_words()):
     maxWord = max(i_words, key=calc_word_value)
     return maxWord
 
+
+def init_find_optimal():
+
+    newDictionary = {}
+    dictionaryWords = load_words()
+
+    for word in dictionaryWords:
+        sign = ''.join(sorted(word.upper()))
+
+        if newDictionary.has_key(sign):
+           newDictionary[sign].append(word)
+        else:
+            newDictionary[sign] = [word]
+
+    return newDictionary
+
 def find_optimal(i_bunchOfLetters):
+    """Find the optimal (highest scoring) word from these letters which is in the dictionary.
+    Return it and the score."""
 
+    signatureDctionary = init_find_optimal()
 
-    pass # Tuple[str,int]:
+    inputSignature = ''.join(sorted(i_bunchOfLetters.upper()))
+
+    if  signatureDctionary.has_key(inputSignature):
+        identicSignatureWords = signatureDctionary[inputSignature]
+        maxWord = max_word_value(identicSignatureWords)
+        maxWordValue = calc_word_value(maxWord)
+    else:
+        maxWord = None
+        maxWordValue = 0
+
+    return (maxWord, maxWordValue)
 
 if __name__ == "__main__":
+
     pass # run unittests to validate

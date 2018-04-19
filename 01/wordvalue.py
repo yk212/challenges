@@ -1,6 +1,6 @@
 from data import DICTIONARY, LETTER_SCORES
 
-class SignatureDctionary:
+class SignatureDictionary:
     dic = None
 
 def load_words():
@@ -45,19 +45,19 @@ def init_find_optimal():
         else:
             newDictionary[sign] = [word]
 
-    SignatureDctionary.dic = newDictionary
+    SignatureDictionary.dic = newDictionary
 
 def find_optimal(i_bunchOfLetters):
     """Find the optimal (highest scoring) word from these letters which is in the dictionary.
     Return it and the score."""
 
-    if SignatureDctionary.dic == None:
+    if SignatureDictionary.dic == None:
         init_find_optimal()
 
     inputSignature = ''.join(sorted(i_bunchOfLetters.upper()))
 
-    if  SignatureDctionary.dic.has_key(inputSignature):
-        identicSignatureWords = SignatureDctionary.dic[inputSignature]
+    if  SignatureDictionary.dic.has_key(inputSignature):
+        identicSignatureWords = SignatureDictionary.dic[inputSignature]
         maxWord = max_word_value(identicSignatureWords)
         maxWordValue = calc_word_value(maxWord)
     else:

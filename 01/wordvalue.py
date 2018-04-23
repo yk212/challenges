@@ -38,7 +38,7 @@ def init_find_optimal():
     dictionaryWords = load_words()
 
     for word in dictionaryWords:
-        sign = ''.join(sorted(word.upper()))
+        sign = get_word_signatue(word)
 
         if newDictionary.has_key(sign):
            newDictionary[sign].append(word)
@@ -47,24 +47,58 @@ def init_find_optimal():
 
     SignatureDictionary.dic = newDictionary
 
+def get_word_signatue(word):
+    return ''.join(sorted(word)).upper()
+
+def get_substrings_of_exact_score(i_list, i_score):
+    currentList = []
+    global_list = []
+    get_substrings_of_specific_score_r(global_list, list(i_list), len(i_list), currentList, i_score)
+    return set(global_list)
+
+def get_substrings_of_specific_score_r(output_list, i_list, i_listLength, i_subList, i_score):
+    if i_score == 0:
+        output_list.append(get_word_signatue(i_subList))
+        return
+
+    if i_listLength == 0:
+        return
+
+    if calc_word_value(i_list[i_listLength - 1]) <= i_score:
+        get_substrings_of_specific_score_r(output_list, i_list, i_listLength - 1, i_subList, i_score)
+        get_substrings_of_specific_score_r(output_list, i_list, i_listLength - 1, i_subList + [i_list[i_listLength - 1]],
+                                           i_score - calc_word_value(i_list[i_listLength - 1]))
+    else:
+        get_substrings_of_specific_score_r(output_list, i_list, i_listLength - 1, i_subList, i_score)
+
+
 def find_optimal(i_bunchOfLetters):
-    """Find the optimal (highest scoring) word from these letters which is in the dictionary.
+    """Find the optimal (highest scoring) word from these letters (including substrings) which is in the dictionary.
     Return it and the score."""
 
     if SignatureDictionary.dic == None:
         init_find_optimal()
 
-    inputSignature = ''.join(sorted(i_bunchOfLetters.upper()))
+    # Calc the maximum score
+    maxPossibleScore = calc_word_value(i_bunchOfLetters)
 
-    if  SignatureDictionary.dic.has_key(inputSignature):
-        identicSignatureWords = SignatureDictionary.dic[inputSignature]
-        maxWord = max_word_value(identicSignatureWords)
-        maxWordValue = calc_word_value(maxWord)
-    else:
-        maxWord = None
-        maxWordValue = 0
+    # Run from maximum score to 0
 
-    return (maxWord, maxWordValue)
+    for currentScore in reversed(range(maxPossibleScore + 1)):
+
+        # Find all permutation with this score
+        currentScoreWordList = get_substrings_of_exact_score(i_bunchOfLetters, currentScore)
+
+        # For each permutation check if exist in dic
+        for word in currentScoreWordList:
+            if (SignatureDictionary.dic.has_key(word)):
+                identicSignatureWords = SignatureDictionary.dic[word]
+                maxWord = identicSignatureWords[0]
+                maxWordValue = calc_word_value(maxWord)
+                return (maxWord, maxWordValue)
+
+    return (None, 0)
+
 
 if __name__ == "__main__":
     pass # run unittests to validate

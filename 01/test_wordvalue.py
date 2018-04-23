@@ -26,6 +26,7 @@ class TestWordValue(unittest.TestCase):
 
     def test_find_optimal(self):
         self.assertEqual(find_optimal('pplea'), ('apple',9))
+        self.assertEqual(find_optimal('ppleaacagb'), ('capable',13))
         self.assertEqual(find_optimal('benzalphenylhydrazone'), ('benzalphenylhydrazone',56))
 
 if __name__ == "__main__":

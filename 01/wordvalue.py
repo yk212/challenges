@@ -50,10 +50,10 @@ def init_find_optimal():
     for word in dictionary_words:
         sign = get_word_signature(word)
 
-        if new_dictionary.has_key(sign):
-           new_dictionary[sign].append(word)
-        else:
-            new_dictionary[sign] = [word]
+        if sign not in new_dictionary:
+            new_dictionary[sign] = []
+
+        new_dictionary[sign].append(word)
 
     SignatureDictionary.dic = new_dictionary
 
@@ -104,7 +104,7 @@ def find_optimal(i_bunch_of_letters):
 
         # For each permutation check if exist in dic
         for word in current_score_word_list:
-            if (SignatureDictionary.dic.has_key(word)):
+            if word in SignatureDictionary.dic:
                 identic_signature_words = SignatureDictionary.dic[word]
                 maxWord = identic_signature_words[0]
                 max_word_value = calc_word_value(maxWord)
@@ -114,5 +114,4 @@ def find_optimal(i_bunch_of_letters):
 
 
 if __name__ == "__main__":
-    print find_optimal("aaavvsdvadfasdfadfsdfadgrynj")
     pass # run unittests to validate

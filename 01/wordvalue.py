@@ -137,7 +137,7 @@ def find_optimal(i_bunch_of_letters):
         for word in current_score_word_list:
             if word in global_signature_dictionary:
                 identic_signature_words = global_signature_dictionary[word]
-                max_word = identic_signature_words[0]
+                max_word = identic_signature_words[0]  # All the words in this list has the same score.
                 max_word_value = current_score
 
                 return (max_word, max_word_value)

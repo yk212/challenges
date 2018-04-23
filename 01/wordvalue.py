@@ -1,8 +1,6 @@
 from data import DICTIONARY, LETTER_SCORES
 
-
-class SignatureDictionary:
-    dic = None
+global_signature_dictionary = None
 
 
 def load_words():
@@ -11,7 +9,7 @@ def load_words():
     with open(DICTIONARY) as dictionary_file:
         dictionary_lines = dictionary_file.readlines()
 
-    dictionary_words = [line.rstrip() for line in dictionary_lines]
+    dictionary_words = [line.strip() for line in dictionary_lines]
 
     if not dictionary_words:
         raise ValueError('The dictionary is Empty')
@@ -43,6 +41,13 @@ def max_word_value(i_words=None):
 
 
 def init_find_optimal():
+    """
+    Build new dictionary of signature from the word in the original one.
+    Signature("apple") = "AELPP"
+    The structure of the dictionary:
+    {"Signature":["Original word 1", "Original word 2"]}
+    """
+    global global_signature_dictionary
 
     new_dictionary = {}
     dictionary_words = load_words()
@@ -55,7 +60,7 @@ def init_find_optimal():
 
         new_dictionary[sign].append(word)
 
-    SignatureDictionary.dic = new_dictionary
+    global_signature_dictionary = new_dictionary
 
 
 def get_word_signature(word):
@@ -70,17 +75,41 @@ def get_substrings_of_exact_score(i_list, i_score):
 
 
 def get_substrings_of_specific_score_r(output_list, i_list, i_sub_list, i_score):
+    """
+    Recursive function, seek and return all subsets (letters) of the given word s.t the sum of the scores is the initial
+    i_score.
+
+    :param output_list: Reference for the output list.
+    :param i_list: The entire set in which the subsets are searched in.
+    :param i_sub_list: Keeps the letters in the current subset.
+    :param i_score: The request score.
+
+    :return: output_list, All the subset with sum score i_score.
+    """
+
+    #  The score goal reached.
     if i_score == 0:
         output_list.append(get_word_signature(i_sub_list))
         return
 
+    #  No more letters to check.
     if len(i_list) == 0:
         return
 
+    #  Consider the last letter in the list - last letter = this letter.
     if calc_word_value(i_list[-1]) <= i_score:
+
+        #  Recursive call, seek for subset that do not contain this letter
+        #  and Removing this letter from the original list.
         get_substrings_of_specific_score_r(output_list, i_list[:-1], i_sub_list, i_score)
+
+        #  Recursive call, seek for subset that contain this letter.
+        #  Removing this letter from the original list,
+        #  add the letter to current subset and update the remaining score.
         get_substrings_of_specific_score_r(output_list, i_list[:-1], i_sub_list + [i_list[-1]],
                                            i_score - calc_word_value(i_list[-1]))
+
+    #  Do not consider the last letter in the list, Removing this letter from the original list.
     else:
         get_substrings_of_specific_score_r(output_list, i_list[:-1], i_sub_list, i_score)
 
@@ -89,7 +118,9 @@ def find_optimal(i_bunch_of_letters):
     """Find the optimal (highest scoring) word from these letters (including substrings) which is in the dictionary.
     Return it and the score."""
 
-    if not SignatureDictionary.dic:
+    global global_signature_dictionary
+
+    if not global_signature_dictionary:
         init_find_optimal()
 
     # Calc the maximum score
@@ -104,14 +135,15 @@ def find_optimal(i_bunch_of_letters):
 
         # For each permutation check if exist in dic
         for word in current_score_word_list:
-            if word in SignatureDictionary.dic:
-                identic_signature_words = SignatureDictionary.dic[word]
-                maxWord = identic_signature_words[0]
-                max_word_value = calc_word_value(maxWord)
-                return (maxWord, max_word_value)
+            if word in global_signature_dictionary:
+                identic_signature_words = global_signature_dictionary[word]
+                max_word = identic_signature_words[0]
+                max_word_value = current_score
+
+                return (max_word, max_word_value)
 
     return (None, 0)
 
 
 if __name__ == "__main__":
-    pass # run unittests to validate
+    pass  # run unittests to validate

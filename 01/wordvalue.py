@@ -65,24 +65,24 @@ def get_word_signature(word):
 def get_substrings_of_exact_score(i_list, i_score):
     current_list = []
     global_list = []
-    get_substrings_of_specific_score_r(global_list, list(i_list), len(i_list), current_list, i_score)
+    get_substrings_of_specific_score_r(global_list, list(i_list), current_list, i_score)
     return set(global_list)
 
 
-def get_substrings_of_specific_score_r(i_output_list, i_list, i_list_length, i_sub_list, i_score):
+def get_substrings_of_specific_score_r(output_list, i_list, i_sub_list, i_score):
     if i_score == 0:
-        i_output_list.append(get_word_signature(i_sub_list))
+        output_list.append(get_word_signature(i_sub_list))
         return
 
-    if i_list_length == 0:
+    if len(i_list) == 0:
         return
 
-    if calc_word_value(i_list[i_list_length - 1]) <= i_score:
-        get_substrings_of_specific_score_r(i_output_list, i_list, i_list_length - 1, i_sub_list, i_score)
-        get_substrings_of_specific_score_r(i_output_list, i_list, i_list_length - 1, i_sub_list + [i_list[i_list_length - 1]],
-                                           i_score - calc_word_value(i_list[i_list_length - 1]))
+    if calc_word_value(i_list[-1]) <= i_score:
+        get_substrings_of_specific_score_r(output_list, i_list[:-1], i_sub_list, i_score)
+        get_substrings_of_specific_score_r(output_list, i_list[:-1], i_sub_list + [i_list[-1]],
+                                           i_score - calc_word_value(i_list[-1]))
     else:
-        get_substrings_of_specific_score_r(i_output_list, i_list, i_list_length - 1, i_sub_list, i_score)
+        get_substrings_of_specific_score_r(output_list, i_list[:-1], i_sub_list, i_score)
 
 
 def find_optimal(i_bunch_of_letters):
